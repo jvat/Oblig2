@@ -1,23 +1,34 @@
-import java.util.Scanner;
+import java.util.*;
 
 public abstract class Kort {
-	private String fornavn, etternavn;
+	protected String fornavn, etternavn;
 	private int PIN;
-	private int kortNummer = 0;
-	private boolean sperretKort;
-	
+	private static int kortNummer = 0;
+	private int detteKortNummer;
+	protected boolean sperretKort;
 	protected Scanner input = new Scanner(System.in);
+	protected Calendar kalender;
+	private Date startDatoKort;
 	
 	protected Kort() {
 		
 	}
-	
-	protected Kort(String fornavn, String etternavn, int PIN, int kortNummer, boolean sperretKort) {
+	protected Kort(String fornavn, int PIN) {
+		this.fornavn = fornavn;
+		this.PIN = PIN;
+		this.detteKortNummer = kortNummer;
+		kortNummer++;
+		kalender = Calendar.getInstance();
+		startDatoKort = kalender.getTime();
+	}
+	protected Kort(String fornavn, String etternavn, int PIN, boolean sperretKort) {
 		this.fornavn = fornavn;
 		this.etternavn = etternavn;
 		this.PIN = PIN;
-		this.kortNummer = kortNummer;
+		this.detteKortNummer = kortNummer;
+		kortNummer++;
 		this.sperretKort = sperretKort;
+		kalender = Calendar.getInstance();
 		
 	}
 	public void settAlleDatamedlemmer() {
@@ -28,7 +39,6 @@ public abstract class Kort {
 		System.out.println("Angi ny PIN: ");
 		this.PIN = input.nextInt();
 		sperretKort = false;
-		kortNummer = kortNummer++;
 		
 	}
 	
@@ -41,17 +51,18 @@ public abstract class Kort {
 	}
 	
 	public boolean isSperret() {
-		if (sperretKort) 
-			return true;
-		else
-			return false;
+		return sperretKort;
 	}
 	
 	public abstract boolean sjekkPIN(int PIN);
 	
+	public int getPIN() {
+		return PIN;
+	}
+
 	@Override
 	public String toString() {
-		return "Navn: " + fornavn + " " + etternavn + "PIN: "  + PIN + "Kortnummer: " + kortNummer 
-				+ "Aksesskode aktivert: " + sperretKort;
+		return "\nNavn: " + fornavn + " " + etternavn + "\nPIN: "  + PIN + "\nKortnummer: " + detteKortNummer 
+				+ "\nAksesskode aktivert: " + sperretKort + "\nKort opprettet:" + startDatoKort;
 	}
 }
