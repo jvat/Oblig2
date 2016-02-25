@@ -1,7 +1,7 @@
 import java.util.*;
 
-public abstract class Kort {
-	protected String fornavn, etternavn;
+public abstract class Kort implements Comparable<Kort>, Cloneable {
+	public String fornavn, etternavn, fulltNavn;
 	private int PIN;
 	private static int kortNummer = 0;
 	private int detteKortNummer;
@@ -9,28 +9,31 @@ public abstract class Kort {
 	protected Scanner input = new Scanner(System.in);
 	protected Calendar kalender;
 	private Date startDatoKort;
-	
+
 	protected Kort() {
-		
+
 	}
-	protected Kort(String fornavn, int PIN) {
-		this.fornavn = fornavn;
+
+	protected Kort(String fulltNavn, int PIN) {
+		this.fulltNavn = fulltNavn;
 		this.PIN = PIN;
 		this.detteKortNummer = kortNummer;
 		kortNummer++;
 		kalender = Calendar.getInstance();
 		startDatoKort = kalender.getTime();
+
 	}
-	protected Kort(String fornavn, String etternavn, int PIN, boolean sperretKort) {
-		this.fornavn = fornavn;
-		this.etternavn = etternavn;
+
+	protected Kort(String fulltNavn, int PIN, boolean sperretKort) {
+		this.fulltNavn = fulltNavn;
 		this.PIN = PIN;
 		this.detteKortNummer = kortNummer;
 		kortNummer++;
 		this.sperretKort = sperretKort;
 		kalender = Calendar.getInstance();
-		
+
 	}
+
 	public void settAlleDatamedlemmer() {
 		System.out.println("Fornavn: ");
 		this.fornavn = input.next();
@@ -39,30 +42,58 @@ public abstract class Kort {
 		System.out.println("Angi ny PIN: ");
 		this.PIN = input.nextInt();
 		sperretKort = false;
-		
+
 	}
-	
+
+	@Override
+	public int compareTo(Kort k) {
+		if (this.getEtternavn() != k.getEtternavn()) {
+
+			if (this.getFornavn() != k.getFornavn())
+				return this.getFornavn().compareTo(k.getFornavn());
+			else
+				return this.getEtternavn().compareTo(k.getEtternavn());
+
+		} else {
+			if (this.getFornavn() != k.getFornavn())
+				return this.getFornavn().compareTo(k.getFornavn());
+			else
+				return 0;
+		}
+
+	}
+
 	public String getFornavn() {
+		String[] navn = hentFulltNavn().split("\\s");
+		String fornavn = navn[0];
+		// String etternavn = navn[1];
 		return fornavn;
 	}
 
 	public String getEtternavn() {
+		String[] navn = hentFulltNavn().split("\\s");
+		// String fornavn = navn[0];
+		String etternavn = navn[1];
 		return etternavn;
 	}
-	
+
+	public String hentFulltNavn() {
+		return fulltNavn;
+	}
+
 	public boolean isSperret() {
 		return sperretKort;
 	}
-	
+
 	public abstract boolean sjekkPIN(int PIN);
-	
+
 	public int getPIN() {
 		return PIN;
 	}
 
 	@Override
 	public String toString() {
-		return "\nNavn: " + fornavn + " " + etternavn + "\nPIN: "  + PIN + "\nKortnummer: " + detteKortNummer 
-				+ "\nAksesskode aktivert: " + sperretKort + "\nKort opprettet:" + startDatoKort;
+		return "\nNavn: " + fulltNavn + "\nPIN: " + PIN + "\nKortnummer: " + detteKortNummer + "\nAksesskode aktivert: "
+				+ sperretKort + "\nKort opprettet: " + startDatoKort;
 	}
 }
